@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<HTML>
+
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+  <TITLE></TITLE>
+  <META NAME="generator" CONTENT="NoteTab Light 7.2 (www.notetab.com)">
+  <META NAME="created" CONTENT="2021-07-05">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/javascript" src="data.js"></script>
+  <link rel="shortcut icon" href="mm87tr.png" type="image/png" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+  <script type="text/javascript"> 
+    const mydata = JSON.parse(data);
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id"); 
+    const originalPortions = getOriginalPortions(id);
+    var portions = getPortions(id);
+
+    function showRecipe() { 
+  	showElement("Naam","",id,"name");
+      //showElement("Porties","<B>Porties</B>: ",id,"Aantal personen");
+      showElement("Voorbereiding","<B>Voorbereiding</B>: ",id, "Voorbereiding");
+      showElement("Bereiding","<B>Bereiding</B>: ",id, "Bereiding");
+  	showElement("Baktijd","<B>Baktijd</B>: ",id, "Baktijd");
+  	showElement("Temperatuur","<B>Temperatuur</B>: ",id, "Temperatuur");
+  	showElement("Afwerking","<B>Afwerking</B>: ",id, "Afwerking");
+  	showElement("Bron","<B>Bron</B>: ",id,"Bron");
+      showPortions(id);
+   	showIngredients(id);    
+    }
+
+    function recalcIngredient(ingredient, scale) {
+      const firstChar = ingredient.search(/[[A-Z ]/i)
+      var amount = ingredient.substr(0,firstChar);
+      const theRest = ingredient.substr(firstChar);
+      if (scale != 1 && amount.length>0 && typeof(eval(amount)*scale) == "number") 
+         return (eval(amount)*scale).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 0 }) + theRest;
+      else return ingredient;
+    }
+
+    function getOriginalPortions(dataId) {
+      var amount = mydata[dataId]["Aantal personen"];
+      if (typeof(amount) == "undefined") return "";
+      else {
+        const firstChar = amount.search(/[A-Z -]/i);
+        if (firstChar == -1) { 
+          if (amount != "\?") return amount*1;
+          else return "";
+        }
+        else {
+          amount = amount.substr(0,firstChar);
+          if (amount.length > 0) return amount*1;
+          else return ""; 
+        }
+      }
+    }
+
+    function getPortions(dataId) {
+      let value = getCookie("portions");
+      if (value != "") {
+        return value*1;
+      } 
+      else {
+        return originalPortions;
+      }
+    }
+
+    function showPortions(dataId) {
+        const elementName="Porties";
+        const detailName="Porties Aantal";
+        if (typeof(portions) == "number" && typeof(originalPortions) == "number" && originalPortions > 0 ) {
+          document.getElementById(detailName).innerHTML = portions;      
+          document.getElementById(elementName).style.display = 'block';
+        }
+        else {
+          document.getElementById(elementName).style.display = 'none';
+        }
+    }      
+
+    function updatePortions(step) {
+        portions = portions + step;
+        if (portions < 1) portions = 1;
+        document.getElementById("Porties Aantal").innerHTML = portions;
+        setCookie("portions",portions,365);
+   	  showIngredients(id);
+    }
+      
+    function showIngredients(id) {
+      var scale = 1 ;
+      if (typeof(originalPortions)== "number" && typeof(portions) == "number" ) scale = portions/originalPortions; 
+      document.getElementById("Ingrediënten").innerHTML = "<B>Ingrediënten</B>: " + mydata[id]["Ingrediënten"].map(element => recalcIngredient(element,scale)).join(', ').replaceAll(':,',':');
+      document.getElementById("Ingrediënten").style.display = 'block';
+    }
+
+    function showElement(elementName, elementLabel, dataId, dataName) {
+        if (typeof(mydata[dataId][dataName]) != "undefined" && mydata[dataId][dataName].length > 0 && mydata[dataId][dataName] != "-" ) {
+          document.getElementById(elementName).innerHTML = elementLabel + mydata[dataId][dataName];      
+          document.getElementById(elementName).style.display = 'block';
+        }
+        else {
+          document.getElementById(elementName).style.display = 'none';
+        }
+    }
+
+    function sendMail(){
+      var subject = mydata[id]["name"];
+      var yourMessage = "Porties: " + mydata[id]["Aantal personen"] + "\n\n"
+                      + "Ingrediënten: " + mydata[id]["Ingrediënten"] + "\n\n"
+                      + "Bereiding: " + mydata[id]["Bereiding"].replace(/<br>/gi, " ") + "\n\n" 
+                      + "Bron: " + mydata[id]["Bron"] + "\n\n";
+      document.location.href = "mailto:?subject="
+          + encodeURIComponent(subject)
+          + "&body=" + encodeURIComponent(document.body.innerText);
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+      const d = new Date();
+      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+      let expires = "expires="+d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+      let name = cname + "=";
+      let ca = document.cookie.split(';');
+      for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+
+  </script>
+</HEAD>
+
+<BODY >
+  <table width="100%"><tr>
+  <td width="30%"><img src="mm87tr.png" width="72" height="54" onclick=history.back()></td>
+  <td width="30%" align='center'><h2>&#9609;EETKUNDE</h2><h3>Familierecepten Mertens-Creten</h3></td>
+  <td width="30%" align='right' ><img src="print.png" width="25" height="25" onclick=window.print()>
+                                 <img src="email.png" width="25" height="18" onclick=sendMail() style="display: none;">
+                                 </td>
+  </tr></table>
+
+  <br>
+  <h2><p id="Naam"></p></h2>
+  <p id="Porties" style="display: none;">
+     <b>Porties: </b>
+     <button class="portion_button" onclick="updatePortions(-1);">-</button>
+     <span id="Porties Aantal"></span>
+     <button class="portion_button" onclick="updatePortions(+1);">+</button>
+     </p>
+  <p id="Ingrediënten" style="display: none;"></p>
+  <p id="Voorbereiding" style="display: none;"></p>
+  <p id="Bereiding" style="display: none;"></p>
+  <p id="Baktijd" style="display: none;"></p>
+  <p id="Temperatuur" style="display: none;"></p>
+  <p id="Afwerking" style="display: none;"></p>
+  <p id="Bron" style="display: none;"></p>
+
+  <script type="text/javascript"> 
+    showRecipe()
+  </script>
+</BODY>
+</HTML>

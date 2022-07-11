@@ -1,0 +1,22 @@
+{
+  "short_name": "Familierecepten",
+  "name": "Familierecepten Mertens-Creten",
+  "icons": [
+    {
+      "src": "/mertenscreten/mm87tr.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/mertenscreten/mm87tr.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/mertenscreten",
+  "background_color": "#3367D6",
+  "display": "fullscreen",
+  "scope": "/mertenscreten",
+  "theme_color": "#3367D6",
+  "description": "Familierecepten Mertens-Creten"
+}

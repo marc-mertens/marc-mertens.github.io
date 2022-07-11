@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<HTML>
+
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+  <TITLE></TITLE>
+  <META NAME="created" CONTENT="2021-07-05">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/javascript" src="data.js"></script>
+  <link rel="shortcut icon" href="mm87tr.png" type="image/png" />
+  <link rel="apple-touch-icon" sizes="128x128" href="mm87tr.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css?v1">
+</HEAD>
+
+<BODY >
+<table width="100%"><tr>
+<!--<td width="30%"><a href="https://drive.google.com/file/d/1QbtNgB8acdfJmNyTPa91DAGatUVcOpiJ/view?usp=sharing"><img src="mm87tr.png" width="72" height="54"></a></td>-->
+<td width="30%"><img src="mm87tr.png" width="72" height="54" onclick=showalphabeticallist()></td>
+<td width="30%" align='center'><h2>&#9609;EETKUNDE</h2><h3>Familierecepten Mertens-Creten</h3></td>
+<td width="30%" align='right'><img src="print.png" width="25" height="25" onclick=window.print()></td>
+</tr></table>
+<br>
+
+<script type="text/javascript"> 
+const mydata = JSON.parse(data);
+
+function showalphabeticallist() {
+   document.getElementById('searchTxt').value = "";
+   const ul = document.getElementById("searchresults");
+   ul.innerHTML = '';
+   for (let id = 0; id < mydata.length; id++) {  
+      var li = document.createElement("li");
+      li.innerHTML='<a href="recept.html?id='+id+'">'+mydata[id]["name"]+'</a>';
+      ul.appendChild(li);       
+   }    
+   document.getElementById("Recipes Found").innerHTML = mydata.length + " recepten A-Z:"
+}
+
+function searchindata(searchstring) {
+   const ul = document.getElementById("searchresults");
+   ul.innerHTML = '';
+   var count = 0;
+   var found = false;
+   searchstring = searchstring.replace(/\W/g, ' ');
+   searchstring = searchstring.replace(/\s\s+/g, ' ' ).trim();
+   searchstring = searchstring.toLowerCase();
+   const searchlist = searchstring.split(' ');
+   if (searchstring.length >0) {
+      for (let id = 0; id < mydata.length; id++) {  
+         var element = mydata[id]["name"]+mydata[id]["Ingrediënten"]+mydata[id]["category"];
+         element = element.toLowerCase();
+         found = true;
+         for (let searchindex = 0; searchindex < searchlist.length ; searchindex++) {
+            found = found && element.includes(searchlist[searchindex]);
+         }
+         if(found){  
+            count += 1;
+            var li = document.createElement("li");
+            li.innerHTML='<a href="recept.html?id='+id+'">'+mydata[id]["name"]+'</a>';
+            ul.appendChild(li);       
+        }    
+     }
+   document.getElementById("Recipes Found").innerHTML = count + " recepten gevonden";
+   if (count > 0) {document.getElementById("Recipes Found").innerHTML += ":"} 
+   document.getElementById('searchTxt').blur() ;
+   }
+   else {
+   showalphabeticallist();
+   }
+}
+</script>
+
+<center>
+<form class="zoek" action="javascript:searchindata(document.getElementById('searchTxt').value);">
+  <input type="text" placeholder="Zoek een recept..." id="searchTxt">
+</form>
+</center>
+
+<p id="Recipes Found"></p>
+<ul id="searchresults">
+</ul> 
+
+<script type="text/javascript"> 
+showalphabeticallist();
+document.getElementById('searchTxt').focus();
+</script>
+
+</BODY>
+</HTML>

@@ -14,9 +14,9 @@
     }
   ],
   "start_url": "/eetkunde",
-  "background_color": "#3367D6",
+  "background_color": "#000000",
   "display": "fullscreen",
   "scope": "/eetkunde",
-  "theme_color": "#3367D6",
+  "theme_color": "#000000",
   "description": "Familierecepten Mertens-Creten"
 }

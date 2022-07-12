@@ -14,7 +14,7 @@
     }
   ],
   "start_url": "/eetkunde",
-  "background_color": "#000000",
+  "background_color": "#EEEEEE",
   "display": "fullscreen",
   "scope": "/eetkunde",
   "theme_color": "#000000",

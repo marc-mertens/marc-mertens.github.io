@@ -7,8 +7,9 @@ docx: https://automatetheboringstuff.com/chapter13/
 fuzzy string matching: https://www.datacamp.com/community/tutorials/fuzzy-string-python
 """
 
-import docx
+import docx #python -m pip install python-docx
 import json
+import re  # Regular Expressions
 #doc = docx.Document('Recepten-2021.docx')
 #print(len(doc.paragraphs))
 # doc.paragraphs[0].text
@@ -75,8 +76,28 @@ def GetWithoutTag(atext):
     therest = atext[atext.find(':')+1:].strip()
     return therest
 
+def ConvertUrlsToLinks(text):
+    """
+    Zet URLs om naar HTML links ZONDER aanhalingstekens rond de attributen.
+    Dit voorkomt conflicten met zowel de JSON (") als de JS variabele (').
+    """
+
+    # De [^\s<>"\)] zorgt dat de URL stopt bij:
+    # spatie (\s), <, >, dubbele quote (") of sluitend haakje (\))
+    url_pattern = r'(https?://[^\s<>"\)]+)'
+    
+    # We laten de quotes rond href en target weg. 
+    # HTML5 staat dit toe: <a href=http://url.be target=_blank>
+    return re.sub(url_pattern, r'<a href=\1 target=_blank>\1</a>', text)
+
 def RemoveEscape(atext):
-    return atext.replace('\n','<br>').replace('\r','').replace('\t',' ').replace('\"','\u00B4').replace("\'","\u00B4")
+    if not atext: return ""
+    
+    cleaned = atext.replace('\n','<br>').replace('\r','').replace('\t',' ').replace('\"','\u00B4').replace("\'","\u00B4")
+    cleaned = cleaned.replace("'", "’")
+    cleaned = ConvertUrlsToLinks(cleaned) 
+    
+    return cleaned
     
 def Recepten2Json(receptfilename, jsonfilename):
     doc = docx.Document(receptfilename)
@@ -118,7 +139,7 @@ def Recepten2Json(receptfilename, jsonfilename):
     jsonfile.close()
     return str(len(data)) + ' recipes processed'
 
-print(Recepten2Json('..\Recepten-2021.docx','data.js'))
+print(Recepten2Json('..\..\Recepten-2026.docx','data.js'))
 
 #print(Docx2Json('Recepten-2021.docx'))
 #file1 = open("ReceptenTest.txt","w")    
